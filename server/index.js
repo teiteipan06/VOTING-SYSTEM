@@ -10,8 +10,16 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get("/poll", async (req, res) => {
   let data = JSON.parse(await fs.readFile(dataFile, "utf-8"));
+  const totalVotes = Object.values(data).reduce((total, n) => total += n, 0);  
 
-  console.log(data);
+  console.log(totalVotes);
+
+  data = Object.entries(data).map(([label, votes]) => {
+    return {
+      label,
+      percentage: ((100 * votes) / totalVotes) || 0
+    }
+  })
 
   res.end();
 });
